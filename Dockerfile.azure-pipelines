@@ -1,4 +1,10 @@
 FROM ubuntu:20.04
+
+# Define the desired Python version and platform
+ENV PYTHON_VERSION=3.11.4
+ENV PLATFORM=x64
+ENV AGENT_TOOLSDIRECTORY=/azp/_work/_tool
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
@@ -11,9 +17,17 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     iputils-ping \
     jq \
     lsb-release \
-    software-properties-common
+    software-properties-common \
+    unzip
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Download and extract the desired Python version
+RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
+RUN curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz | tar -xz -C $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM --strip-components=1
+
+# Create the .complete file
+RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64
