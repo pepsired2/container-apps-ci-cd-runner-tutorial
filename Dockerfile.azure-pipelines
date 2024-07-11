@@ -42,7 +42,7 @@ RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
 RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
 RUN ls
 RUN tar -xf Python-$PYTHON_VERSION.tgz > /dev/null
-RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM &&\
+RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM && \
     make -j 4 && make altinstall
 
 # Create the .complete file
@@ -54,7 +54,7 @@ ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
 RUN python3.11 --version
 
 # Install pip and pipenv using the installed Python
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+# RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64
