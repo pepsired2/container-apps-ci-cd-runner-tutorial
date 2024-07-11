@@ -18,7 +18,22 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     jq \
     lsb-release \
     software-properties-common \
-    unzip
+    unzip \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    llvm \
+    libncurses5-dev \
+    libncursesw5-dev \
+    xz-utils \
+    tk-dev \
+    libffi-dev \
+    liblzma-dev \
+    python3-openssl
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
@@ -33,7 +48,7 @@ RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
 ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
 
 # Install pip and pipenv using the installed Python
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin/python3
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64
