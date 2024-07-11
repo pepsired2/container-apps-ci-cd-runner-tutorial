@@ -38,9 +38,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Download and extract the desired Python version
-RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
-RUN curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
-RUN tar -xq -f Python-$PYTHON_VERSION.tgz
+RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM && \
+    curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
+
+# tar -xq -C $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
 RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
 RUN make -j 4 && make altinstall
 
@@ -51,7 +52,7 @@ RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
 # Set the Python binaries in the PATH
 ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
 
-RUN python3.11 -- version
+RUN python3.11 --version
 
 # Install pip and pipenv using the installed Python
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
