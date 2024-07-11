@@ -33,9 +33,19 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     tk-dev \
     libffi-dev \
     liblzma-dev \
-    python3-openssl
+    python3-openssl \
+    gnupg2 \
+    lsb-release \
+    software-properties-common
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Install Docker
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Download and extract the desired Python version
 RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
