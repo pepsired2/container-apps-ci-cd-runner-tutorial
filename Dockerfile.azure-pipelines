@@ -40,10 +40,9 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # Download and extract the desired Python version
 RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
 RUN curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
-RUN tar -xf Python-$PYTHON_VERSION.tgz
+RUN tar -xq -f Python-$PYTHON_VERSION.tgz
 RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
-RUN make -j 4
-RUN make altinstall
+RUN make -j 4 && make altinstall
 
 
 # Create the .complete file
