@@ -39,7 +39,12 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
 # Download and extract the desired Python version
 RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
-RUN curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz | tar -xz -C $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM --strip-components=1
+RUN curl -sL https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
+RUN tar -xf Python-$PYTHON_VERSION.tgz
+RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
+RUN make -j 4
+RUN make altinstall
+
 
 # Create the .complete file
 RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
@@ -47,8 +52,10 @@ RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
 # Set the Python binaries in the PATH
 ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
 
+RUN python3.11 -- version
+
 # Install pip and pipenv using the installed Python
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin/python3
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64
