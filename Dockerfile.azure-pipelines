@@ -36,35 +36,31 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommend
     python3-openssl \
     gnupg2 \
     lsb-release \
-    software-properties-common
+    software-properties-common \
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
-# Install Docker
-RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-    DEBIAN_FRONTEND=noninteractive apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io
+## Download and extract the desired Python version
+#RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
+#RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
+#RUN ls
+#RUN tar -xf Python-$PYTHON_VERSION.tgz > /dev/null
+#RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM && \
+#    make -j 4 && make altinstall
+#
+## Create the .complete file
+#RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
+#
+## Set the Python binaries in the PATH
+#ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
+#
+#
+## Install pip and pipenv using the installed Python
+## RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
 
-# Download and extract the desired Python version
-RUN mkdir -p $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM
-RUN wget https://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tgz
-RUN ls
-RUN tar -xf Python-$PYTHON_VERSION.tgz > /dev/null
-RUN cd Python-$PYTHON_VERSION && ./configure --enable-optimizations --prefix=$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM && \
-    make -j 4 && make altinstall
-
-# Create the .complete file
-RUN touch $AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM.complete
-
-# Set the Python binaries in the PATH
-ENV PATH="$AGENT_TOOLSDIRECTORY/Python/$PYTHON_VERSION/$PLATFORM/bin:$PATH"
-
-RUN python3.11 --version
-
-# Install pip and pipenv using the installed Python
-# RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+# Alternate python install
+RUN apt-get install -y -qq --no-install-recommends python3 python3-pip
+RUN pip3 --version
 
 # Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
 ENV TARGETARCH=linux-x64
